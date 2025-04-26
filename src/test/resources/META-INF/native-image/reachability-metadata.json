@@ -1,0 +1,10 @@
+{
+  "serialization": [
+    {
+      "type": "com.github.sttk.errs.ExcTest$SerializableReason"
+    },
+    {
+      "type": "java.lang.IndexOutOfBoundsException"
+    }
+  ]
+}
