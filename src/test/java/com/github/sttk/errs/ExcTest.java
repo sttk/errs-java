@@ -225,9 +225,11 @@ public class ExcTest {
             }
 
             var isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
-            var prefix = "com.github.sttk.errs.RuntimeExc: " + exc.toString() + "\n";
+            var prefix = "com.github.sttk.errs.RuntimeExc: " + exc.toString();
             if (isWindows) {
-                prefix += "  ";
+                prefix += System.lineSeparator() + "  ";
+            } else {
+                prefix += System.lineSeparator();
             }
             prefix += "Caused by: ";
 
