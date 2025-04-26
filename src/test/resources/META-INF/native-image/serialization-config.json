@@ -1,0 +1,14 @@
+{
+  "types":[
+    {
+      "name": "com.github.sttk.errs.ExcTest$SerializableReason"
+    },
+    {
+      "name": "java.lang.IndexOutOfBoundsException"
+    }
+  ],
+  "lambdaCapturingTypes":[
+  ],
+  "proxies":[
+  ]
+}

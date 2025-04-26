@@ -1,0 +1,41 @@
+{
+  "types": [
+    {
+      "name": "com.github.sttk.errs.Exc"
+    },
+    {
+      "name": "java.io.IOException"
+    },
+    {
+      "name": "java.io.NotSerializableException"
+    },
+    {
+      "name": "java.io.ObjectStreamException"
+    },
+    {
+      "name": "java.lang.Exception"
+    },
+    {
+      "name": "java.lang.RuntimeException"
+    },
+    {
+      "name": "java.lang.StackTraceElement"
+    },
+    {
+      "name": "java.lang.StackTraceElement[]"
+    },
+    {
+      "name": "java.lang.String"
+    },
+    {
+      "name": "java.lang.Throwable"
+    },
+    {
+      "name": "java.util.Collections$EmptyList"
+    }
+  ],
+  "lambdaCapturingTypes":[
+  ],
+  "proxies":[
+  ]
+}
