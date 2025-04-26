@@ -227,7 +227,7 @@ public class ExcTest {
             var isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
             var prefix = "com.github.sttk.errs.RuntimeExc: " + exc.toString();
             if (isWindows) {
-                prefix += System.lineSeparator() + "  ";
+                prefix += System.lineSeparator();
             } else {
                 prefix += System.lineSeparator();
             }
