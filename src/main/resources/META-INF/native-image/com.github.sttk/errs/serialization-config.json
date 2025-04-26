@@ -33,5 +33,9 @@
     {
       "name": "java.util.Collections$EmptyList"
     }
+  ],
+  "lambdaCapturingTypes":[
+  ],
+  "proxies":[
   ]
 }
