@@ -224,7 +224,13 @@ public class ExcTest {
                 rtExc.printStackTrace(pwOfRtExc);
             }
 
-            var prefix = "com.github.sttk.errs.RuntimeExc: " + exc.toString() + "\nCaused by: ";
+            var isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
+            var prefix = "com.github.sttk.errs.RuntimeExc: " + exc.toString() + "\n";
+            if (isWindows) {
+                prefix += " ";
+            }
+            prefix += "Caused by: ";
+
             assertThat(swOfRtExc.toString()).isEqualTo(prefix + swOfExc.toString());
 
             // rtExc.printStackTrace();
