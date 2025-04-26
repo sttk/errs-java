@@ -44,7 +44,7 @@ public final class Exc extends Exception {
     private StackTraceElement trace;
 
     /**
-     * Is the constructor which takes a {@link Record} object indicating the reason for this excpetion.
+     * Is the constructor which takes a {@link Record} object indicating the reason for this exception.
      *
      * @param reason
      *            A reason for this exception.
@@ -60,7 +60,7 @@ public final class Exc extends Exception {
 
     /**
      * Is the constructor which takes a {@link Record} object indicating the reason and {@link Throwable} object
-     * indicating the cause for this excpetion.
+     * indicating the cause for this exception.
      *
      * @param reason
      *            A reason for this exception.
