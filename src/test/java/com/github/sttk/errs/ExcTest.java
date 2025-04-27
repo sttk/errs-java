@@ -2,10 +2,8 @@ package com.github.sttk.errs;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledInNativeImage;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -153,7 +151,7 @@ public class ExcTest {
         @Test
         void getLine() {
             var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
-            assertThat(exc.getLine()).isEqualTo(155);
+            assertThat(exc.getLine()).isEqualTo(153);
         }
     }
 
@@ -181,7 +179,7 @@ public class ExcTest {
         void with_reason() {
             var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
             assertThat(exc.toString()).isEqualTo(
-                    "com.github.sttk.errs.Exc { reason = com.github.sttk.errs.ExcTest$IndexOutOfRange { name=data, index=4, min=0, max=3 }, file = ExcTest.java, line = 182 }");
+                    "com.github.sttk.errs.Exc { reason = com.github.sttk.errs.ExcTest$IndexOutOfRange { name=data, index=4, min=0, max=3 }, file = ExcTest.java, line = 180 }");
         }
 
         @Test
@@ -189,7 +187,7 @@ public class ExcTest {
             var cause = new IndexOutOfBoundsException(4);
             var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3), cause);
             assertThat(exc.toString()).isEqualTo(
-                    "com.github.sttk.errs.Exc { reason = com.github.sttk.errs.ExcTest$IndexOutOfRange { name=data, index=4, min=0, max=3 }, file = ExcTest.java, line = 190, cause = java.lang.IndexOutOfBoundsException: Index out of range: 4 }");
+                    "com.github.sttk.errs.Exc { reason = com.github.sttk.errs.ExcTest$IndexOutOfRange { name=data, index=4, min=0, max=3 }, file = ExcTest.java, line = 188, cause = java.lang.IndexOutOfBoundsException: Index out of range: 4 }");
         }
     }
 
