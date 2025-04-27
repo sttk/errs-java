@@ -1,0 +1,1 @@
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html"},{"p":"com.github.sttk.errs","l":"Exc"},{"p":"com.github.sttk.errs","l":"ExcHandler"}];updateSearchResults();
