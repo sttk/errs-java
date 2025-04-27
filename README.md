@@ -5,12 +5,13 @@ A library for handling exceptions with reasons.
 In Java programming, it is cumbersome to implement a separate exception class for each exception case.
 However, trying to handle multiple exception cases with a single exception class makes it difficult to distinguish between them.
 
-The exception class `Exc` provided by this library solves this problem by accepting a `Record` object that represents the reason for the exception.
+The exception class `Exc` provided by this library solves this problem by accepting an object that represents the reason for the exception.
+Typically, the type of this reason object is `Record`.
 Since a `Record` object can have any fields, it can store information about the situation at the time the exception occurred.
-The type of the `Record` object can be determined and cast using a switch statement, making it easy to write handling logic for each exception case.
+The type of the reason can be determined and cast using a switch statement, making it easy to write handling logic for each exception case.
 
 Optionally, when an `Exc` object is instantiated, pre-registered exception handlers can receive notifications either synchronously or asynchronously.
-However, to enable this feature, you must specify the system property `-Dgithub.sttk.errs.notify=true` at program startup.
+However, to enable this feature, the system property `-Dgithub.sttk.errs.notify=true` must be specified at program startup.
 
 ## Install
 
