@@ -45,7 +45,7 @@ dependencies {
 
 ### Exc instantiation and identification of a reason
 
-The following code instantiate a `Exc` and throws it.
+The following code instantiates an `Exc` and throws it.
 
 ```java
 package sample;
@@ -58,7 +58,7 @@ public class SampleClass {
 
     public void sampleMethod() throws Exc {
         ...
-        throw new Exc(new InvalidOutOfRange("array", i, 0, array.length));
+        throw new Exc(new IndexOutOfRange("array", i, 0, array.length));
     }
 }
 ```
