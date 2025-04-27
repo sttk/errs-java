@@ -100,7 +100,7 @@
           <charset>UTF-8</charset>
           <docencoding>UTF-8</docencoding>
           <bottom><![CDATA[Copyright 2025 Takayuki Sato. All Rights Reserved.]]></bottom>
-          <outputDirectory>${project.reporting.outputDirectory}/apidocs</outputDirectory>
+          <outputDirectory>${project.reporting.outputDirectory}</outputDirectory>
         </configuration>
         <executions>
           <execution>
