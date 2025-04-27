@@ -12,4 +12,5 @@
  */
 module com.github.sttk.errs {
   exports com.github.sttk.errs;
+  requires java.management;
 }

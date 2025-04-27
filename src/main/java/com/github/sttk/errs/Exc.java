@@ -4,12 +4,16 @@
  */
 package com.github.sttk.errs;
 
+import java.lang.management.ManagementFactory;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.InvalidObjectException;
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.LinkedList;
 
 /**
  * Is the exception class with a reason.
@@ -17,7 +21,9 @@ import java.io.InvalidObjectException;
  * This class has a record field which indicates a reason for this exception. The class name of the reason record
  * represents the type of reason, and the fields of the reason record hold the situation where the exception occurred.
  * <p>
- * Optionally, this exception class can notify its instance creation to pre-registered exception handlers.
+ * Optionally, this exception class can notify its instance creation to pre-registered exception handlers. This
+ * notification feature can be enabled by specifying the system property {@code -Dgithub.sttk.errs.notify=true} when the
+ * JVM is started.
  * <p>
  * The example code of creating and throwing an excepton is as follows:
  *
@@ -27,7 +33,7 @@ import java.io.InvalidObjectException;
  *
  * try {
  *     throw new Exc(new FailToDoSomething("abc", 123));
- * } catch (Err e) {
+ * } catch (Exc e) {
  *     System.out.println(e.getMessage()); // => "FailToDoSomething { name=abc, value=123 }"
  * }
  * }</pre>
@@ -56,6 +62,8 @@ public final class Exc extends Exception {
         this.reason = reason;
 
         this.trace = getStackTrace()[0];
+
+        notifyExc(this);
     }
 
     /**
@@ -77,6 +85,8 @@ public final class Exc extends Exception {
         this.reason = reason;
 
         this.trace = getStackTrace()[0];
+
+        notifyExc(this);
     }
 
     /**
@@ -192,6 +202,95 @@ public final class Exc extends Exception {
 
         if (this.reason == null) {
             throw new InvalidObjectException("reason is null or invalid.");
+        }
+    }
+
+    //// Notification ////
+
+    private static final boolean useNotification;
+
+    static {
+        boolean b = false;
+        for (String arg : ManagementFactory.getRuntimeMXBean().getInputArguments()) {
+            if ("-Dgithub.sttk.errs.notify=true".equals(arg)) {
+                b = true;
+                break;
+            }
+        }
+        useNotification = b;
+    }
+
+    private static boolean isFixed = false;
+    private static final List<ExcHandler> syncExcHandlers = new LinkedList<>();
+    private static final List<ExcHandler> asyncExcHandlers = new LinkedList<>();
+
+    /**
+     * Adds an {@link ExcHandler} object which is executed synchronously just after an {@link Exc} is created. Handlers
+     * added with this method are executed in the order of addition and stop if one of the handlers throws a
+     * {@link RuntimeException} or an {@link Error}. NOTE: This feature is enabled via the system property:
+     * {@code github.sttk.errs.notify=true}
+     *
+     * @param handler
+     *            An {@link ExcHandler} object.
+     */
+    public static void addSyncHandler(final ExcHandler handler) {
+        if (!useNotification)
+            return;
+        if (isFixed)
+            return;
+        syncExcHandlers.add(handler);
+    }
+
+    /**
+     * Adds an {@link ExcHandler} object which is executed asynchronously just after an {@link Exc} is created. Handlers
+     * don't stop even if one of the handlers throw a {@link RuntimeException} or an {@link Error}. NOTE: This feature
+     * is enabled via the system property: {@code github.sttk.errs.notify=true}
+     *
+     * @param handler
+     *            An {@link ExcHandler} object.
+     */
+    public static void addAsyncHandler(final ExcHandler handler) {
+        if (!useNotification)
+            return;
+        if (isFixed)
+            return;
+        asyncExcHandlers.add(handler);
+    }
+
+    /**
+     * Prevents further addition of {@link ExcHandler} objects to synchronous and asynchronous exception handler lists.
+     * Before this is called, no {@code Exc} is notified to the handlers. After this is called, no new handlers can be
+     * added, and {@code Exc}(s) is notified to the handlers. NOTE: This feature is enabled via the system property:
+     * {@code github.sttk.errs.notify=true}
+     */
+    public static void fixHandlers() {
+        if (!useNotification)
+            return;
+        if (isFixed)
+            return;
+        isFixed = true;
+    }
+
+    private static void notifyExc(Exc exc) {
+        if (!useNotification)
+            return;
+        if (!isFixed)
+            return;
+
+        if (syncExcHandlers.isEmpty() && asyncExcHandlers.isEmpty()) {
+            return;
+        }
+
+        final var tm = OffsetDateTime.now();
+
+        for (var handler : syncExcHandlers) {
+            handler.handle(exc, tm);
+        }
+
+        for (var handler : asyncExcHandlers) {
+            Thread.ofVirtual().start(() -> {
+                handler.handle(exc, tm);
+            });
         }
     }
 }

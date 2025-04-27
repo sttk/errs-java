@@ -151,11 +151,14 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.5.3</version>
+        <configuration>
+          <argLine>@{argLine} -Dgithub.sttk.errs.notify=true</argLine>
+        </configuration>
       </plugin>
       <plugin>
-       <groupId>net.revelc.code.formatter</groupId>
-       <artifactId>formatter-maven-plugin</artifactId>
-       <version>2.26.0</version>
+        <groupId>net.revelc.code.formatter</groupId>
+        <artifactId>formatter-maven-plugin</artifactId>
+        <version>2.26.0</version>
       </plugin>
     </plugins>
   </build>
@@ -187,6 +190,9 @@
                 <buildArg>--initialize-at-build-time=org.junit.platform.launcher.core.LauncherConfig</buildArg>
                 <buildArg>--initialize-at-build-time=org.junit.jupiter.engine.config.InstantiatingConfigurationParameterConverter</buildArg>
               </buildArgs>
+              <systemProperties>
+                <github.sttk.errs.notify>true</github.sttk.errs.notify>
+              </systemProperties>
             </configuration>
           </plugin>
         </plugins>
