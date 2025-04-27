@@ -16,7 +16,7 @@ public class ExcHandlerTest {
 
     @BeforeEach
     void reset() throws Exception {
-        var f = Exc.class.getDeclaredField("isFixed");
+        var f = Exc.class.getDeclaredField("isHandlersFixed");
         f.setAccessible(true);
         f.setBoolean(null, false);
 

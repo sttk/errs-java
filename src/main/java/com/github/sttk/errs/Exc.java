@@ -220,7 +220,7 @@ public final class Exc extends Exception {
         useNotification = b;
     }
 
-    private static boolean isFixed = false;
+    private static boolean isHandlersFixed = false;
     private static final List<ExcHandler> syncExcHandlers = new LinkedList<>();
     private static final List<ExcHandler> asyncExcHandlers = new LinkedList<>();
 
@@ -236,7 +236,7 @@ public final class Exc extends Exception {
     public static void addSyncHandler(final ExcHandler handler) {
         if (!useNotification)
             return;
-        if (isFixed)
+        if (isHandlersFixed)
             return;
         syncExcHandlers.add(handler);
     }
@@ -252,7 +252,7 @@ public final class Exc extends Exception {
     public static void addAsyncHandler(final ExcHandler handler) {
         if (!useNotification)
             return;
-        if (isFixed)
+        if (isHandlersFixed)
             return;
         asyncExcHandlers.add(handler);
     }
@@ -266,15 +266,15 @@ public final class Exc extends Exception {
     public static void fixHandlers() {
         if (!useNotification)
             return;
-        if (isFixed)
+        if (isHandlersFixed)
             return;
-        isFixed = true;
+        isHandlersFixed = true;
     }
 
     private static void notifyExc(Exc exc) {
         if (!useNotification)
             return;
-        if (!isFixed)
+        if (!isHandlersFixed)
             return;
 
         if (syncExcHandlers.isEmpty() && asyncExcHandlers.isEmpty()) {
