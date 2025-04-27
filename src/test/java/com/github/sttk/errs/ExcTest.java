@@ -2,6 +2,7 @@ package com.github.sttk.errs;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +32,7 @@ public class ExcTest {
     @Nested
     class TestConstructor {
         @Test
-        void with_reason() {
+        void with_Record_reason() {
             var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
             var reason = IndexOutOfRange.class.cast(exc.getReason());
             assertThat(reason.name()).isEqualTo("data");
@@ -41,6 +42,28 @@ public class ExcTest {
             assertThat(exc.getCause()).isNull();
 
             // exc.printStackTrace();
+        }
+
+        @Test
+        void with_enum_reason() {
+            enum Reasons {
+                FailToDoSomething,
+            }
+
+            var exc = new Exc(Reasons.FailToDoSomething);
+            var reason = Reasons.class.cast(exc.getReason());
+            assertThat(reason.name()).isEqualTo("FailToDoSomething");
+            assertThat(exc.getCause()).isNull();
+
+            // exc.printStackTrace();
+        }
+
+        @Test
+        void with_String_reason() {
+            var exc = new Exc("FailToDoSomething");
+            var reason = String.class.cast(exc.getReason());
+            assertThat(reason).isEqualTo("FailToDoSomething");
+            assertThat(exc.getCause()).isNull();
         }
 
         @Test
@@ -104,7 +127,7 @@ public class ExcTest {
         }
 
         @Test
-        void identify_reason_with_switch_expression() {
+        void identify_Record_reason_with_switch_expression() {
             var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
             switch (exc.getReason()) {
                 case IndexOutOfRange reason -> {
@@ -115,6 +138,24 @@ public class ExcTest {
                 }
                 default -> fail();
             }
+        }
+
+        @Test
+        void identify_Enum_reason_with_switch_expression() {
+            enum Reasons {
+                FailToDoSomething, InvalidValue,
+            }
+
+            var exc = new Exc(Reasons.FailToDoSomething);
+
+            var s = switch (exc.getReason()) {
+                case Reasons enm -> switch (enm) {
+                    case FailToDoSomething -> "fail to do something";
+                    case InvalidValue -> "invalid value";
+                };
+                default -> "unknown";
+            };
+            assertThat(s).isEqualTo("fail to do something");
         }
     }
 
@@ -151,7 +192,7 @@ public class ExcTest {
         @Test
         void getLine() {
             var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
-            assertThat(exc.getLine()).isEqualTo(153);
+            assertThat(exc.getLine()).isEqualTo(194);
         }
     }
 
@@ -160,16 +201,14 @@ public class ExcTest {
         @Test
         void with_cause() {
             var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
-            assertThat(exc.getMessage())
-                    .isEqualTo("com.github.sttk.errs.ExcTest$IndexOutOfRange { name=data, index=4, min=0, max=3 }");
+            assertThat(exc.getMessage()).isEqualTo("IndexOutOfRange[name=data, index=4, min=0, max=3]");
         }
 
         @Test
         void with_no_cause() {
             var cause = new IndexOutOfBoundsException(4);
             var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3), cause);
-            assertThat(exc.getMessage())
-                    .isEqualTo("com.github.sttk.errs.ExcTest$IndexOutOfRange { name=data, index=4, min=0, max=3 }");
+            assertThat(exc.getMessage()).isEqualTo("IndexOutOfRange[name=data, index=4, min=0, max=3]");
         }
     }
 
@@ -179,7 +218,7 @@ public class ExcTest {
         void with_reason() {
             var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
             assertThat(exc.toString()).isEqualTo(
-                    "com.github.sttk.errs.Exc { reason = com.github.sttk.errs.ExcTest$IndexOutOfRange { name=data, index=4, min=0, max=3 }, file = ExcTest.java, line = 180 }");
+                    "com.github.sttk.errs.Exc { reason = com.github.sttk.errs.ExcTest$IndexOutOfRange IndexOutOfRange[name=data, index=4, min=0, max=3], file = ExcTest.java, line = 219 }");
         }
 
         @Test
@@ -187,7 +226,7 @@ public class ExcTest {
             var cause = new IndexOutOfBoundsException(4);
             var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3), cause);
             assertThat(exc.toString()).isEqualTo(
-                    "com.github.sttk.errs.Exc { reason = com.github.sttk.errs.ExcTest$IndexOutOfRange { name=data, index=4, min=0, max=3 }, file = ExcTest.java, line = 188, cause = java.lang.IndexOutOfBoundsException: Index out of range: 4 }");
+                    "com.github.sttk.errs.Exc { reason = com.github.sttk.errs.ExcTest$IndexOutOfRange IndexOutOfRange[name=data, index=4, min=0, max=3], file = ExcTest.java, line = 227, cause = java.lang.IndexOutOfBoundsException: Index out of range: 4 }");
         }
     }
 
@@ -197,8 +236,7 @@ public class ExcTest {
         void getMessage() {
             var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
             var rtExc = exc.toRuntimeException();
-            assertThat(rtExc.getMessage())
-                    .isEqualTo("com.github.sttk.errs.ExcTest$IndexOutOfRange { name=data, index=4, min=0, max=3 }");
+            assertThat(rtExc.getMessage()).isEqualTo("IndexOutOfRange[name=data, index=4, min=0, max=3]");
         }
 
         @Test

@@ -18,8 +18,9 @@ import java.util.LinkedList;
 /**
  * Is the exception class with a reason.
  * <p>
- * This class has a record field which indicates a reason for this exception. The class name of the reason record
- * represents the type of reason, and the fields of the reason record hold the situation where the exception occurred.
+ * This class has a field which indicates a reason for this exception. Typically the type of this field is
+ * {@link Record}. In this case, the class name of this record represents the reason, and the fields of the record hold
+ * the situation where the exception occurred.
  * <p>
  * Optionally, this exception class can notify its instance creation to pre-registered exception handlers. This
  * notification feature can be enabled by specifying the system property {@code -Dgithub.sttk.errs.notify=true} when the
@@ -44,18 +45,18 @@ public final class Exc extends Exception {
     private static final long serialVersionUID = 260427082865587554L;
 
     /** The reason for this exception. */
-    private transient Record reason;
+    private transient Object reason;
 
     /** The stack trace for the location of occurrence. */
     private StackTraceElement trace;
 
     /**
-     * Is the constructor which takes a {@link Record} object indicating the reason for this exception.
+     * Is the constructor which takes an object indicating the reason for this exception.
      *
      * @param reason
      *            A reason for this exception.
      */
-    public Exc(final Record reason) {
+    public Exc(final Object reason) {
         if (reason == null) {
             throw new IllegalArgumentException("reason is null");
         }
@@ -67,8 +68,8 @@ public final class Exc extends Exception {
     }
 
     /**
-     * Is the constructor which takes a {@link Record} object indicating the reason and {@link Throwable} object
-     * indicating the cause for this exception.
+     * Is the constructor which takes an object indicating the reason and {@link Throwable} object indicating the cause
+     * for this exception.
      *
      * @param reason
      *            A reason for this exception.
@@ -76,7 +77,7 @@ public final class Exc extends Exception {
      *            A cause for this exception.
      */
     @SuppressWarnings("this-escape")
-    public Exc(final Record reason, final Throwable cause) {
+    public Exc(final Object reason, final Throwable cause) {
         super(cause);
 
         if (reason == null) {
@@ -94,7 +95,7 @@ public final class Exc extends Exception {
      *
      * @return The reason for this exception.
      */
-    public Record getReason() {
+    public Object getReason() {
         return this.reason;
     }
 
@@ -105,13 +106,7 @@ public final class Exc extends Exception {
      */
     @Override
     public String getMessage() {
-        var rsn = this.reason.toString();
-        var rname = this.reason.getClass().getSimpleName();
-        rsn = rsn.substring(rname.length() + 1, rsn.length() - 1);
-
-        var buf = new StringBuilder(this.reason.getClass().getName());
-        buf.append(" { ").append(rsn).append(" }");
-        return buf.toString();
+        return reason.toString();
     }
 
     /**
@@ -123,7 +118,7 @@ public final class Exc extends Exception {
     @Override
     public String toString() {
         var buf = new StringBuilder(getClass().getName());
-        buf.append(" { reason = ").append(getMessage());
+        buf.append(" { reason = ").append(reason.getClass().getName()).append(" ").append(reason.toString());
         buf.append(", file = ").append(this.trace.getFileName());
         buf.append(", line = ").append(this.trace.getLineNumber());
         if (getCause() != null) {
@@ -166,8 +161,8 @@ public final class Exc extends Exception {
     /**
      * Writes a serial data of this exception to a stream.
      * <p>
-     * Since a {@link Record} object is not necessarily serializable, this method will throw a
-     * {@link NotSerializableException} if the {@code reason} field does not inherit {@link Serializable}.
+     * Since a reason object is not necessarily serializable, this method will throw a {@link NotSerializableException}
+     * if the {@code reason} field does not inherit {@link Serializable}.
      *
      * @param out
      *            An {@link ObjectOutputStream} to which data is written.
@@ -185,8 +180,7 @@ public final class Exc extends Exception {
 
     /**
      * Reconstitutes the {@code Exc} instance from a stream and initialize the reason and cause properties when
-     * deserializing. If the reason by deserialization is null or invalid, this method throws
-     * {@link InvalidObjectException}.
+     * deserializing. If the reason by deserialization is null, this method throws {@link InvalidObjectException}.
      *
      * @param in
      *            An {@link ObjectInputStream} from which data is read.
@@ -198,7 +192,7 @@ public final class Exc extends Exception {
      */
     private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
         in.defaultReadObject();
-        this.reason = Record.class.cast(in.readObject());
+        this.reason = in.readObject();
 
         if (this.reason == null) {
             throw new InvalidObjectException("reason is null or invalid.");
