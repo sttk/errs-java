@@ -106,7 +106,7 @@ public final class Exc extends Exception {
      */
     @Override
     public String getMessage() {
-        return new StringBuilder(this.reason.getClass().getName()).append(" ").append(reason.toString()).toString();
+        return reason.toString();
     }
 
     /**
@@ -118,7 +118,7 @@ public final class Exc extends Exception {
     @Override
     public String toString() {
         var buf = new StringBuilder(getClass().getName());
-        buf.append(" { reason = ").append(getMessage());
+        buf.append(" { reason = ").append(reason.getClass().getName()).append(" ").append(reason.toString());
         buf.append(", file = ").append(this.trace.getFileName());
         buf.append(", line = ").append(this.trace.getLineNumber());
         if (getCause() != null) {

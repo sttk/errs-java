@@ -201,16 +201,14 @@ public class ExcTest {
         @Test
         void with_cause() {
             var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
-            assertThat(exc.getMessage()).isEqualTo(
-                    "com.github.sttk.errs.ExcTest$IndexOutOfRange IndexOutOfRange[name=data, index=4, min=0, max=3]");
+            assertThat(exc.getMessage()).isEqualTo("IndexOutOfRange[name=data, index=4, min=0, max=3]");
         }
 
         @Test
         void with_no_cause() {
             var cause = new IndexOutOfBoundsException(4);
             var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3), cause);
-            assertThat(exc.getMessage()).isEqualTo(
-                    "com.github.sttk.errs.ExcTest$IndexOutOfRange IndexOutOfRange[name=data, index=4, min=0, max=3]");
+            assertThat(exc.getMessage()).isEqualTo("IndexOutOfRange[name=data, index=4, min=0, max=3]");
         }
     }
 
@@ -220,7 +218,7 @@ public class ExcTest {
         void with_reason() {
             var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
             assertThat(exc.toString()).isEqualTo(
-                    "com.github.sttk.errs.Exc { reason = com.github.sttk.errs.ExcTest$IndexOutOfRange IndexOutOfRange[name=data, index=4, min=0, max=3], file = ExcTest.java, line = 221 }");
+                    "com.github.sttk.errs.Exc { reason = com.github.sttk.errs.ExcTest$IndexOutOfRange IndexOutOfRange[name=data, index=4, min=0, max=3], file = ExcTest.java, line = 219 }");
         }
 
         @Test
@@ -228,7 +226,7 @@ public class ExcTest {
             var cause = new IndexOutOfBoundsException(4);
             var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3), cause);
             assertThat(exc.toString()).isEqualTo(
-                    "com.github.sttk.errs.Exc { reason = com.github.sttk.errs.ExcTest$IndexOutOfRange IndexOutOfRange[name=data, index=4, min=0, max=3], file = ExcTest.java, line = 229, cause = java.lang.IndexOutOfBoundsException: Index out of range: 4 }");
+                    "com.github.sttk.errs.Exc { reason = com.github.sttk.errs.ExcTest$IndexOutOfRange IndexOutOfRange[name=data, index=4, min=0, max=3], file = ExcTest.java, line = 227, cause = java.lang.IndexOutOfBoundsException: Index out of range: 4 }");
         }
     }
 
@@ -238,8 +236,7 @@ public class ExcTest {
         void getMessage() {
             var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
             var rtExc = exc.toRuntimeException();
-            assertThat(rtExc.getMessage()).isEqualTo(
-                    "com.github.sttk.errs.ExcTest$IndexOutOfRange IndexOutOfRange[name=data, index=4, min=0, max=3]");
+            assertThat(rtExc.getMessage()).isEqualTo("IndexOutOfRange[name=data, index=4, min=0, max=3]");
         }
 
         @Test
