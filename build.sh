@@ -18,7 +18,7 @@ compile() {
 }
 
 format() {
-  mvn formatter:format
+  mvn spotless:apply
   errcheck $?
 }
 
