@@ -11,6 +11,6 @@
  * <p>This package contains the {@code Err} class which has a record field indicates the reason for
  * the exception.
  *
- * @version 0.1
+ * @version 0.2
  */
 package com.github.sttk.errs;
