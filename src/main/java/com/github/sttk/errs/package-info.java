@@ -8,7 +8,7 @@
 /**
  * Provides classes for handling an exception with a reason.
  *
- * <p>This package contains the {@code Exc} class which has a record field indicates the reason for
+ * <p>This package contains the {@code Err} class which has a record field indicates the reason for
  * the exception.
  *
  * @version 0.1

@@ -8,22 +8,22 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class ExcHandlerTest {
-  private ExcHandlerTest() {}
+public class ErrHandlerTest {
+  private ErrHandlerTest() {}
 
   @BeforeEach
   void reset() throws Exception {
-    var f = Exc.class.getDeclaredField("isHandlersFixed");
+    var f = Err.class.getDeclaredField("isHandlersFixed");
     f.setAccessible(true);
     f.setBoolean(null, false);
 
-    f = Exc.class.getDeclaredField("syncExcHandlers");
+    f = Err.class.getDeclaredField("syncErrHandlers");
     f.setAccessible(true);
     var o = f.get(null);
     var m = LinkedList.class.getMethod("clear");
     m.invoke(o);
 
-    f = Exc.class.getDeclaredField("asyncExcHandlers");
+    f = Err.class.getDeclaredField("asyncErrHandlers");
     f.setAccessible(true);
     o = f.get(null);
     m = LinkedList.class.getMethod("clear");
@@ -31,70 +31,70 @@ public class ExcHandlerTest {
   }
 
   @SuppressWarnings("unchecked")
-  List<ExcHandler> getSyncExcHandlers() throws Exception {
-    var f = Exc.class.getDeclaredField("syncExcHandlers");
+  List<ErrHandler> getSyncErrHandlers() throws Exception {
+    var f = Err.class.getDeclaredField("syncErrHandlers");
     f.setAccessible(true);
     var o = f.get(null);
-    return (List<ExcHandler>) o;
+    return (List<ErrHandler>) o;
   }
 
   @SuppressWarnings("unchecked")
-  List<ExcHandler> getAsyncExcHandlers() throws Exception {
-    var f = Exc.class.getDeclaredField("asyncExcHandlers");
+  List<ErrHandler> getAsyncErrHandlers() throws Exception {
+    var f = Err.class.getDeclaredField("asyncErrHandlers");
     f.setAccessible(true);
     var o = f.get(null);
-    return (List<ExcHandler>) o;
+    return (List<ErrHandler>) o;
   }
 
   @Test
   void should_add_sync_handlers_and_fix() throws Exception {
-    var handlers = getSyncExcHandlers();
+    var handlers = getSyncErrHandlers();
     assertThat(handlers).isEmpty();
 
-    ExcHandler handler1 = (exc, tm) -> {};
-    Exc.addSyncHandler(handler1);
+    ErrHandler handler1 = (err, tm) -> {};
+    Err.addSyncHandler(handler1);
 
-    handlers = getSyncExcHandlers();
+    handlers = getSyncErrHandlers();
     assertThat(handlers).containsExactly(handler1);
 
-    ExcHandler handler2 = (exc, tm) -> {};
-    Exc.addSyncHandler(handler2);
+    ErrHandler handler2 = (err, tm) -> {};
+    Err.addSyncHandler(handler2);
 
-    handlers = getSyncExcHandlers();
+    handlers = getSyncErrHandlers();
     assertThat(handlers).containsExactly(handler1, handler2);
 
-    Exc.fixHandlers();
+    Err.fixHandlers();
 
-    ExcHandler handler3 = (exc, tm) -> {};
-    Exc.addSyncHandler(handler3);
+    ErrHandler handler3 = (err, tm) -> {};
+    Err.addSyncHandler(handler3);
 
-    handlers = getSyncExcHandlers();
+    handlers = getSyncErrHandlers();
     assertThat(handlers).containsExactly(handler1, handler2);
   }
 
   @Test
   void should_add_async_handlers_and_fix() throws Exception {
-    var handlers = getAsyncExcHandlers();
+    var handlers = getAsyncErrHandlers();
     assertThat(handlers).isEmpty();
 
-    ExcHandler handler1 = (exc, tm) -> {};
-    Exc.addAsyncHandler(handler1);
+    ErrHandler handler1 = (err, tm) -> {};
+    Err.addAsyncHandler(handler1);
 
-    handlers = getAsyncExcHandlers();
+    handlers = getAsyncErrHandlers();
     assertThat(handlers).containsExactly(handler1);
 
-    ExcHandler handler2 = (exc, tm) -> {};
-    Exc.addAsyncHandler(handler2);
+    ErrHandler handler2 = (err, tm) -> {};
+    Err.addAsyncHandler(handler2);
 
-    handlers = getAsyncExcHandlers();
+    handlers = getAsyncErrHandlers();
     assertThat(handlers).containsExactly(handler1, handler2);
 
-    Exc.fixHandlers();
+    Err.fixHandlers();
 
-    ExcHandler handler3 = (exc, tm) -> {};
-    Exc.addAsyncHandler(handler3);
+    ErrHandler handler3 = (err, tm) -> {};
+    Err.addAsyncHandler(handler3);
 
-    handlers = getAsyncExcHandlers();
+    handlers = getAsyncErrHandlers();
     assertThat(handlers).containsExactly(handler1, handler2);
   }
 
@@ -103,40 +103,40 @@ public class ExcHandlerTest {
     final List<String> syncLogs = new LinkedList<>();
     final List<String> asyncLogs = new LinkedList<>();
 
-    Exc.addSyncHandler(
-        (exc, tm) -> {
+    Err.addSyncHandler(
+        (err, tm) -> {
           syncLogs.add(
               String.format(
                   "%s:%s(%d):%s",
                   tm.format(ISO_INSTANT),
-                  exc.getFile(),
-                  exc.getLine(),
-                  exc.getReason().toString()));
+                  err.getFile(),
+                  err.getLine(),
+                  err.getReason().toString()));
         });
-    Exc.addAsyncHandler(
-        (exc, tm) -> {
+    Err.addAsyncHandler(
+        (err, tm) -> {
           asyncLogs.add(
               String.format(
                   "%s:%s(%d):%s",
                   tm.format(ISO_INSTANT),
-                  exc.getFile(),
-                  exc.getLine(),
-                  exc.getReason().toString()));
+                  err.getFile(),
+                  err.getLine(),
+                  err.getReason().toString()));
         });
 
     record FailToDoSomething(String name) {}
 
-    new Exc(new FailToDoSomething("abc"));
+    new Err(new FailToDoSomething("abc"));
 
     assertThat(syncLogs).isEmpty();
     assertThat(asyncLogs).isEmpty();
 
-    Exc.fixHandlers();
+    Err.fixHandlers();
 
-    new Exc(new FailToDoSomething("abc"));
-    assertThat(syncLogs.get(0)).endsWith(":ExcHandlerTest.java(136):FailToDoSomething[name=abc]");
+    new Err(new FailToDoSomething("abc"));
+    assertThat(syncLogs.get(0)).endsWith(":ErrHandlerTest.java(136):FailToDoSomething[name=abc]");
 
     Thread.sleep(100);
-    assertThat(asyncLogs.get(0)).endsWith(":ExcHandlerTest.java(136):FailToDoSomething[name=abc]");
+    assertThat(asyncLogs.get(0)).endsWith(":ErrHandlerTest.java(136):FailToDoSomething[name=abc]");
   }
 }
