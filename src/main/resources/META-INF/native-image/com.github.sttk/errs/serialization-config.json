@@ -1,7 +1,7 @@
 {
   "types": [
     {
-      "name": "com.github.sttk.errs.Exc"
+      "name": "com.github.sttk.errs.Err"
     },
     {
       "name": "java.io.IOException"

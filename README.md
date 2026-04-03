@@ -1,16 +1,16 @@
 # [errs-java][repo-url] [![Maven Central][mvn-img]][mvn-url] [![GitHub.io][io-img]][io-url] [![CI Status][ci-img]][ci-url] [![MIT License][mit-img]][mit-url]
 
-A library for handling exceptions with reasons.
+A library for handling errors with reasons.
 
 In Java programming, it is cumbersome to implement a separate exception class for each exception case.
 However, trying to handle multiple exception cases with a single exception class makes it difficult to distinguish between them.
 
-The exception class `Exc` provided by this library solves this problem by accepting an object that represents the reason for the exception.
+The error class `Err` provided by this library solves this problem by accepting an object that represents the reason for the error.
 Typically, the type of this reason object is `Record`.
-Since a `Record` object can have any fields, it can store information about the situation at the time the exception occurred.
-The type of the reason can be determined and cast using a switch statement, making it easy to write handling logic for each exception case.
+Since a `Record` object can have any fields, it can store information about the situation at the time the error occurred.
+The type of the reason can be determined and cast using a switch statement, making it easy to write handling logic for each error case.
 
-Optionally, when an `Exc` object is instantiated, pre-registered exception handlers can receive notifications either synchronously or asynchronously.
+Optionally, when an `Err` object is instantiated, pre-registered error handlers can receive notifications either synchronously or asynchronously.
 However, to enable this feature, the system property `-Dgithub.sttk.errs.notify=true` must be specified at program startup.
 
 ## Install
@@ -44,32 +44,32 @@ dependencies {
 
 ## Usage
 
-### Exc instantiation and identification of a reason
+### Err instantiation and identification of a reason
 
-The following code instantiates an `Exc` and throws it.
+The following code instantiates an `Err` and throws it.
 
 ```java
 package sample;
 
-import com.github.sttk.errs.Exc;
+import com.github.sttk.errs.Err;
 
 public class SampleClass {
 
     record IndexOutOfRange(String name, int index, int min, int max) {}
 
-    public void sampleMethod() throws Exc {
+    public void sampleMethod() throws Err {
         ...
-        throw new Exc(new IndexOutOfRange("array", i, 0, array.length));
+        throw new Err(new IndexOutOfRange("array", i, 0, array.length));
     }
 }
 ```
 
-And the following code catches the exception and identifies the reason with a switch expression.
+And the following code catches the error and identifies the reason with a switch expression.
 
 ```java
   try {
       sampleMethod();
-  } catch (Exc e) {
+  } catch (Err e) {
       switch (e.getReason()) {
           case IndexOutOfRange reason -> {
               String name = reason.name();
@@ -83,45 +83,45 @@ And the following code catches the exception and identifies the reason with a sw
   }
 ```
 
-### Exception notification (Optional)
+### Error notification (Optional)
 
 > To enable this feature, you must specify the system property `-Dgithub.sttk.errs.notify=true` at program startup.
 
-This library optionally provides a feature to notify pre-registered exception handlers when an `Exc` is instantiated.
-Multiple exception handlers can be registered, and you can choose to receive notifications either synchronously or asynchronously.
-To register exception handlers that receive notifications synchronously, use the `Exc.AddSyncHandler` static method.
-For asynchronous notifications, use the `Exc.AddAsyncHandler` static method.
+This library optionally provides a feature to notify pre-registered error handlers when an `Err` is instantiated.
+Multiple error handlers can be registered, and you can choose to receive notifications either synchronously or asynchronously.
+To register error handlers that receive notifications synchronously, use the `Err.addSyncHandler` static method.
+For asynchronous notifications, use the `Err.addAsyncHandler` static method.
 
-Exception notifications will not occur until the `Exc.fixHandlers` static method is called.
-This static method locks the current set of exception handlers, preventing further additions and enabling notification processing.
+Error notifications will not occur until the `Err.fixHandlers` static method is called.
+This static method locks the current set of error handlers, preventing further additions and enabling notification processing.
 
 ```java
 package sample;
 
-import com.github.sttk.errs.Exc;
+import com.github.sttk.errs.Err;
 import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 
 public class Main {
     static {
-        Exc.addSyncHandlers((exc, tm) -> {
+        Err.addSyncHandler((err, tm) -> {
           System.out.println(String.format("%s - %s:%d",
-            exc.getMessage(), exc.getFile(), exc.getLine());
+            err.getMessage(), err.getFile(), err.getLine());
         });
 
-        Exc.addAsyncHandlers((exc, tm) -> {
+        Err.addAsyncHandler((err, tm) -> {
           removeLogger.log(String.format("%s:%s:%d:%s",
-              tm.format(ISO_INSTANT), exc.getFile(), exc.getLine(), exc.toString()));
+              tm.format(ISO_INSTANT), err.getFile(), err.getLine(), err.toString()));
         });
 
-        Exc.fixHandlers();
+        Err.fixHandlers();
     }
 
     record IndexOutOfRange(String name, int index, int min, int max) {}
 
     public static void main(String[] args) {
         try {
-            throw new Exc(new IndexOutOfRange("array", 11, 0, 10));
-        } catch (Exc e) {}
+            throw new Err(new IndexOutOfRange("array", 11, 0, 10));
+        } catch (Err e) {}
     }
 }
 ```
@@ -143,7 +143,7 @@ And see the following pages to build native image with Maven or Gradle.
 - [Native image building with Maven plugin](https://graalvm.github.io/native-build-tools/latest/maven-plugin.html)
 - [Native image building with Gradle plugin](https://graalvm.github.io/native-build-tools/latest/gradle-plugin.html)
 
-**NOTE:** If serialization for `Exc` is used, it is needed to specify the serialization configurations for derived classes of `Record` indicating the reason and derived classes of `Throwable` indicating the causing exception classes in the `serialization-config.json` file.
+**NOTE:** If serialization for `Err` is used, it is needed to specify the serialization configurations for derived classes of `Record` indicating the reason and derived classes of `Throwable` indicating the causing error classes in the `serialization-config.json` file.
 
 ## Supporting JDK versions
 

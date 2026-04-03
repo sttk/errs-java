@@ -1,6 +1,6 @@
 /*
- * Exc class.
- * Copyright (C) 2025 Takayuki Sato. All Rights Reserved.
+ * Err class.
+ * Copyright (C) 2025-2026 Takayuki Sato. All Rights Reserved.
  */
 package com.github.sttk.errs;
 
@@ -26,20 +26,20 @@ import java.util.List;
  * handlers. This notification feature can be enabled by specifying the system property {@code
  * -Dgithub.sttk.errs.notify=true} when the JVM is started.
  *
- * <p>The example code of creating and throwing an excepton is as follows:
+ * <p>The example code of creating and throwing an exception is as follows:
  *
  * <pre>{@code
  * public record FailToDoSomething(String name, int value) {
  * }
  *
  * try {
- *     throw new Exc(new FailToDoSomething("abc", 123));
- * } catch (Exc e) {
+ *     throw new Err(new FailToDoSomething("abc", 123));
+ * } catch (Err e) {
  *     System.out.println(e.getMessage()); // => "FailToDoSomething { name=abc, value=123 }"
  * }
  * }</pre>
  */
-public final class Exc extends Exception {
+public final class Err extends Exception {
 
   /** The serial version UID. */
   private static final long serialVersionUID = 260427082865587554L;
@@ -55,7 +55,7 @@ public final class Exc extends Exception {
    *
    * @param reason A reason for this exception.
    */
-  public Exc(final Object reason) {
+  public Err(final Object reason) {
     if (reason == null) {
       throw new IllegalArgumentException("reason is null");
     }
@@ -63,7 +63,7 @@ public final class Exc extends Exception {
 
     this.trace = getStackTrace()[0];
 
-    notifyExc(this);
+    notifyErr(this);
   }
 
   /**
@@ -74,7 +74,7 @@ public final class Exc extends Exception {
    * @param cause A cause for this exception.
    */
   @SuppressWarnings("this-escape")
-  public Exc(final Object reason, final Throwable cause) {
+  public Err(final Object reason, final Throwable cause) {
     super(cause);
 
     if (reason == null) {
@@ -84,7 +84,7 @@ public final class Exc extends Exception {
 
     this.trace = getStackTrace()[0];
 
-    notifyExc(this);
+    notifyErr(this);
   }
 
   /**
@@ -128,7 +128,7 @@ public final class Exc extends Exception {
   }
 
   /**
-   * Returns the name of the source file of this exception occurrance.
+   * Returns the name of the source file of this exception occurrence.
    *
    * <p>This method can return null if this information is unavailable.
    *
@@ -139,23 +139,23 @@ public final class Exc extends Exception {
   }
 
   /**
-   * Returns the line number of this exception occurrance in the source file.
+   * Returns the line number of this exception occurrence in the source file.
    *
    * <p>This method can return a negative number if this information is unavailable.
    *
-   * @return The line number of this exception occurrance in the source file.
+   * @return The line number of this exception occurrence in the source file.
    */
   public int getLine() {
     return this.trace.getLineNumber();
   }
 
   /**
-   * Creates a {@link RuntimeException} object for methods that cannot throw a {@link Exc}.
+   * Creates a {@link RuntimeException} object for methods that cannot throw a {@link Err}.
    *
    * @return A {@link RuntimeException} object.
    */
   public RuntimeException toRuntimeException() {
-    return new RuntimeExc(this);
+    return new RuntimeErr(this);
   }
 
   /**
@@ -176,7 +176,7 @@ public final class Exc extends Exception {
   }
 
   /**
-   * Reconstitutes the {@code Exc} instance from a stream and initialize the reason and cause
+   * Reconstitutes the {@code Err} instance from a stream and initialize the reason and cause
    * properties when deserializing. If the reason by deserialization is null, this method throws
    * {@link InvalidObjectException}.
    *
@@ -209,41 +209,41 @@ public final class Exc extends Exception {
   }
 
   private static boolean isHandlersFixed = false;
-  private static final List<ExcHandler> syncExcHandlers = new LinkedList<>();
-  private static final List<ExcHandler> asyncExcHandlers = new LinkedList<>();
+  private static final List<ErrHandler> syncErrHandlers = new LinkedList<>();
+  private static final List<ErrHandler> asyncErrHandlers = new LinkedList<>();
 
   /**
-   * Adds an {@link ExcHandler} object which is executed synchronously just after an {@link Exc} is
+   * Adds an {@link ErrHandler} object which is executed synchronously just after an {@link Err} is
    * created. Handlers added with this method are executed in the order of addition and stop if one
    * of the handlers throws a {@link RuntimeException} or an {@link Error}. NOTE: This feature is
    * enabled via the system property: {@code github.sttk.errs.notify=true}
    *
-   * @param handler An {@link ExcHandler} object.
+   * @param handler An {@link ErrHandler} object.
    */
-  public static void addSyncHandler(final ExcHandler handler) {
+  public static void addSyncHandler(final ErrHandler handler) {
     if (!useNotification) return;
     if (isHandlersFixed) return;
-    syncExcHandlers.add(handler);
+    syncErrHandlers.add(handler);
   }
 
   /**
-   * Adds an {@link ExcHandler} object which is executed asynchronously just after an {@link Exc} is
+   * Adds an {@link ErrHandler} object which is executed asynchronously just after an {@link Err} is
    * created. Handlers don't stop even if one of the handlers throw a {@link RuntimeException} or an
    * {@link Error}. NOTE: This feature is enabled via the system property: {@code
    * github.sttk.errs.notify=true}
    *
-   * @param handler An {@link ExcHandler} object.
+   * @param handler An {@link ErrHandler} object.
    */
-  public static void addAsyncHandler(final ExcHandler handler) {
+  public static void addAsyncHandler(final ErrHandler handler) {
     if (!useNotification) return;
     if (isHandlersFixed) return;
-    asyncExcHandlers.add(handler);
+    asyncErrHandlers.add(handler);
   }
 
   /**
-   * Prevents further addition of {@link ExcHandler} objects to synchronous and asynchronous
-   * exception handler lists. Before this is called, no {@code Exc} is notified to the handlers.
-   * After this is called, no new handlers can be added, and {@code Exc}(s) is notified to the
+   * Prevents further addition of {@link ErrHandler} objects to synchronous and asynchronous
+   * exception handler lists. Before this is called, no {@code Err} is notified to the handlers.
+   * After this is called, no new handlers can be added, and {@code Err}(s) is notified to the
    * handlers. NOTE: This feature is enabled via the system property: {@code
    * github.sttk.errs.notify=true}
    */
@@ -253,35 +253,35 @@ public final class Exc extends Exception {
     isHandlersFixed = true;
   }
 
-  private static void notifyExc(Exc exc) {
+  private static void notifyErr(Err err) {
     if (!useNotification) return;
     if (!isHandlersFixed) return;
 
-    if (syncExcHandlers.isEmpty() && asyncExcHandlers.isEmpty()) {
+    if (syncErrHandlers.isEmpty() && asyncErrHandlers.isEmpty()) {
       return;
     }
 
     final var tm = OffsetDateTime.now();
 
-    for (var handler : syncExcHandlers) {
-      handler.handle(exc, tm);
+    for (var handler : syncErrHandlers) {
+      handler.handle(err, tm);
     }
 
-    for (var handler : asyncExcHandlers) {
+    for (var handler : asyncErrHandlers) {
       Thread.ofVirtual()
           .start(
               () -> {
-                handler.handle(exc, tm);
+                handler.handle(err, tm);
               });
     }
   }
 }
 
-final class RuntimeExc extends RuntimeException {
+final class RuntimeErr extends RuntimeException {
   private static final long serialVersionUID = 4664405757902479929L;
 
-  RuntimeExc(Exc exc) {
-    super(exc);
+  RuntimeErr(Err err) {
+    super(err);
   }
 
   @Override

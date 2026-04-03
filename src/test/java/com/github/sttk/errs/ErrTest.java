@@ -14,8 +14,8 @@ import java.io.StringWriter;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-public class ExcTest {
-  private ExcTest() {}
+public class ErrTest {
+  private ErrTest() {}
 
   /// exception reasons ///
 
@@ -27,15 +27,15 @@ public class ExcTest {
   class TestConstructor {
     @Test
     void with_Record_reason() {
-      var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
-      var reason = IndexOutOfRange.class.cast(exc.getReason());
+      var err = new Err(new IndexOutOfRange("data", 4, 0, 3));
+      var reason = IndexOutOfRange.class.cast(err.getReason());
       assertThat(reason.name()).isEqualTo("data");
       assertThat(reason.index()).isEqualTo(4);
       assertThat(reason.min()).isEqualTo(0);
       assertThat(reason.max()).isEqualTo(3);
-      assertThat(exc.getCause()).isNull();
+      assertThat(err.getCause()).isNull();
 
-      // exc.printStackTrace();
+      // err.printStackTrace();
     }
 
     @Test
@@ -44,26 +44,26 @@ public class ExcTest {
         FailToDoSomething,
       }
 
-      var exc = new Exc(Reasons.FailToDoSomething);
-      var reason = Reasons.class.cast(exc.getReason());
+      var err = new Err(Reasons.FailToDoSomething);
+      var reason = Reasons.class.cast(err.getReason());
       assertThat(reason.name()).isEqualTo("FailToDoSomething");
-      assertThat(exc.getCause()).isNull();
+      assertThat(err.getCause()).isNull();
 
-      // exc.printStackTrace();
+      // err.printStackTrace();
     }
 
     @Test
     void with_String_reason() {
-      var exc = new Exc("FailToDoSomething");
-      var reason = String.class.cast(exc.getReason());
+      var err = new Err("FailToDoSomething");
+      var reason = String.class.cast(err.getReason());
       assertThat(reason).isEqualTo("FailToDoSomething");
-      assertThat(exc.getCause()).isNull();
+      assertThat(err.getCause()).isNull();
     }
 
     @Test
     void with_reason_but_reason_is_null() {
       try {
-        new Exc(null);
+        new Err(null);
       } catch (IllegalArgumentException e) {
         assertThat(e.getMessage()).isEqualTo("reason is null");
       }
@@ -72,22 +72,22 @@ public class ExcTest {
     @Test
     void with_reason_and_cause() {
       var cause = new IndexOutOfBoundsException(4);
-      var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3), cause);
-      var reason = IndexOutOfRange.class.cast(exc.getReason());
+      var err = new Err(new IndexOutOfRange("data", 4, 0, 3), cause);
+      var reason = IndexOutOfRange.class.cast(err.getReason());
       assertThat(reason.name()).isEqualTo("data");
       assertThat(reason.index()).isEqualTo(4);
       assertThat(reason.min()).isEqualTo(0);
       assertThat(reason.max()).isEqualTo(3);
-      assertThat(exc.getCause()).isEqualTo(cause);
+      assertThat(err.getCause()).isEqualTo(cause);
 
-      // exc.printStackTrace();
+      // err.printStackTrace();
     }
 
     @Test
     void with_reason_and_cause_but_reason_is_null() {
       var cause = new IndexOutOfBoundsException(4);
       try {
-        new Exc(null, cause);
+        new Err(null, cause);
       } catch (IllegalArgumentException e) {
         assertThat(e.getMessage()).isEqualTo("reason is null");
       }
@@ -95,15 +95,15 @@ public class ExcTest {
 
     @Test
     void with_reason_and_cause_but_cause_is_null() {
-      var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3), null);
-      var reason = IndexOutOfRange.class.cast(exc.getReason());
+      var err = new Err(new IndexOutOfRange("data", 4, 0, 3), null);
+      var reason = IndexOutOfRange.class.cast(err.getReason());
       assertThat(reason.name()).isEqualTo("data");
       assertThat(reason.index()).isEqualTo(4);
       assertThat(reason.min()).isEqualTo(0);
       assertThat(reason.max()).isEqualTo(3);
-      assertThat(exc.getCause()).isNull();
+      assertThat(err.getCause()).isNull();
 
-      // exc.printStackTrace();
+      // err.printStackTrace();
     }
   }
 
@@ -111,8 +111,8 @@ public class ExcTest {
   class TestThrow {
     @Test
     void identify_reason_with_instanceOf() {
-      var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
-      if (exc.getReason() instanceof IndexOutOfRange reason) {
+      var err = new Err(new IndexOutOfRange("data", 4, 0, 3));
+      if (err.getReason() instanceof IndexOutOfRange reason) {
         assertThat(reason.name()).isEqualTo("data");
         assertThat(reason.index()).isEqualTo(4);
         assertThat(reason.min()).isEqualTo(0);
@@ -122,8 +122,8 @@ public class ExcTest {
 
     @Test
     void identify_Record_reason_with_switch_expression() {
-      var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
-      switch (exc.getReason()) {
+      var err = new Err(new IndexOutOfRange("data", 4, 0, 3));
+      switch (err.getReason()) {
         case IndexOutOfRange reason -> {
           assertThat(reason.name()).isEqualTo("data");
           assertThat(reason.index()).isEqualTo(4);
@@ -141,10 +141,10 @@ public class ExcTest {
         InvalidValue,
       }
 
-      var exc = new Exc(Reasons.FailToDoSomething);
+      var err = new Err(Reasons.FailToDoSomething);
 
       var s =
-          switch (exc.getReason()) {
+          switch (err.getReason()) {
             case Reasons enm ->
                 switch (enm) {
                   case FailToDoSomething -> "fail to do something";
@@ -160,10 +160,10 @@ public class ExcTest {
   class TestGetter {
     @Test
     void getReason() {
-      var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
-      assertThat(exc.getReason()).isInstanceOf(IndexOutOfRange.class);
+      var err = new Err(new IndexOutOfRange("data", 4, 0, 3));
+      assertThat(err.getReason()).isInstanceOf(IndexOutOfRange.class);
 
-      var reason = IndexOutOfRange.class.cast(exc.getReason());
+      var reason = IndexOutOfRange.class.cast(err.getReason());
       assertThat(reason.name()).isEqualTo("data");
       assertThat(reason.index()).isEqualTo(4);
       assertThat(reason.min()).isEqualTo(0);
@@ -172,24 +172,24 @@ public class ExcTest {
 
     @Test
     void getCause() {
-      var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
-      assertThat(exc.getCause()).isNull();
+      var err = new Err(new IndexOutOfRange("data", 4, 0, 3));
+      assertThat(err.getCause()).isNull();
 
       var cause = new IndexOutOfBoundsException(4);
-      exc = new Exc(new IndexOutOfRange("data", 4, 0, 3), cause);
-      assertThat(exc.getCause()).isEqualTo(cause);
+      err = new Err(new IndexOutOfRange("data", 4, 0, 3), cause);
+      assertThat(err.getCause()).isEqualTo(cause);
     }
 
     @Test
     void getFile() {
-      var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
-      assertThat(exc.getFile()).isEqualTo("ExcTest.java");
+      var err = new Err(new IndexOutOfRange("data", 4, 0, 3));
+      assertThat(err.getFile()).isEqualTo("ErrTest.java");
     }
 
     @Test
     void getLine() {
-      var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
-      assertThat(exc.getLine()).isEqualTo(191);
+      var err = new Err(new IndexOutOfRange("data", 4, 0, 3));
+      assertThat(err.getLine()).isEqualTo(191);
     }
   }
 
@@ -197,15 +197,15 @@ public class ExcTest {
   class TestGetMessage {
     @Test
     void with_cause() {
-      var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
-      assertThat(exc.getMessage()).isEqualTo("IndexOutOfRange[name=data, index=4, min=0, max=3]");
+      var err = new Err(new IndexOutOfRange("data", 4, 0, 3));
+      assertThat(err.getMessage()).isEqualTo("IndexOutOfRange[name=data, index=4, min=0, max=3]");
     }
 
     @Test
     void with_no_cause() {
       var cause = new IndexOutOfBoundsException(4);
-      var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3), cause);
-      assertThat(exc.getMessage()).isEqualTo("IndexOutOfRange[name=data, index=4, min=0, max=3]");
+      var err = new Err(new IndexOutOfRange("data", 4, 0, 3), cause);
+      assertThat(err.getMessage()).isEqualTo("IndexOutOfRange[name=data, index=4, min=0, max=3]");
     }
   }
 
@@ -213,19 +213,19 @@ public class ExcTest {
   class TestToString {
     @Test
     void with_reason() {
-      var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
-      assertThat(exc.toString())
+      var err = new Err(new IndexOutOfRange("data", 4, 0, 3));
+      assertThat(err.toString())
           .isEqualTo(
-              "com.github.sttk.errs.Exc { reason = com.github.sttk.errs.ExcTest$IndexOutOfRange IndexOutOfRange[name=data, index=4, min=0, max=3], file = ExcTest.java, line = 216 }");
+              "com.github.sttk.errs.Err { reason = com.github.sttk.errs.ErrTest$IndexOutOfRange IndexOutOfRange[name=data, index=4, min=0, max=3], file = ErrTest.java, line = 216 }");
     }
 
     @Test
     void with_reason_and_cause() {
       var cause = new IndexOutOfBoundsException(4);
-      var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3), cause);
-      assertThat(exc.toString())
+      var err = new Err(new IndexOutOfRange("data", 4, 0, 3), cause);
+      assertThat(err.toString())
           .isEqualTo(
-              "com.github.sttk.errs.Exc { reason = com.github.sttk.errs.ExcTest$IndexOutOfRange IndexOutOfRange[name=data, index=4, min=0, max=3], file = ExcTest.java, line = 225, cause = java.lang.IndexOutOfBoundsException: Index out of range: 4 }");
+              "com.github.sttk.errs.Err { reason = com.github.sttk.errs.ErrTest$IndexOutOfRange IndexOutOfRange[name=data, index=4, min=0, max=3], file = ErrTest.java, line = 225, cause = java.lang.IndexOutOfBoundsException: Index out of range: 4 }");
     }
   }
 
@@ -233,34 +233,34 @@ public class ExcTest {
   class TestToRuntimeException {
     @Test
     void getMessage() {
-      var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
-      var rtExc = exc.toRuntimeException();
-      assertThat(rtExc.getMessage()).isEqualTo("IndexOutOfRange[name=data, index=4, min=0, max=3]");
+      var err = new Err(new IndexOutOfRange("data", 4, 0, 3));
+      var rtErr = err.toRuntimeException();
+      assertThat(rtErr.getMessage()).isEqualTo("IndexOutOfRange[name=data, index=4, min=0, max=3]");
     }
 
     @Test
     void getCause() {
-      var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
-      var rtExc = exc.toRuntimeException();
-      assertThat(rtExc.getCause()).isEqualTo(exc);
+      var err = new Err(new IndexOutOfRange("data", 4, 0, 3));
+      var rtErr = err.toRuntimeException();
+      assertThat(rtErr.getCause()).isEqualTo(err);
     }
 
     @Test
     void printStackTrace() {
-      var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
-      var rtExc = exc.toRuntimeException();
+      var err = new Err(new IndexOutOfRange("data", 4, 0, 3));
+      var rtErr = err.toRuntimeException();
 
-      var swOfExc = new StringWriter();
-      try (var pwOfExc = new PrintWriter(swOfExc)) {
-        exc.printStackTrace(pwOfExc);
+      var swOfErr = new StringWriter();
+      try (var pwOfErr = new PrintWriter(swOfErr)) {
+        err.printStackTrace(pwOfErr);
       }
-      var swOfRtExc = new StringWriter();
-      try (var pwOfRtExc = new PrintWriter(swOfRtExc)) {
-        rtExc.printStackTrace(pwOfRtExc);
+      var swOfRtErr = new StringWriter();
+      try (var pwOfRtErr = new PrintWriter(swOfRtErr)) {
+        rtErr.printStackTrace(pwOfRtErr);
       }
 
       var isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
-      var prefix = "com.github.sttk.errs.RuntimeExc: " + exc.toString();
+      var prefix = "com.github.sttk.errs.RuntimeErr: " + err.toString();
       if (isWindows) {
         prefix += System.lineSeparator();
       } else {
@@ -268,9 +268,9 @@ public class ExcTest {
       }
       prefix += "Caused by: ";
 
-      assertThat(swOfRtExc.toString()).isEqualTo(prefix + swOfExc.toString());
+      assertThat(swOfRtErr.toString()).isEqualTo(prefix + swOfErr.toString());
 
-      // rtExc.printStackTrace();
+      // rtErr.printStackTrace();
     }
   }
 
@@ -281,21 +281,21 @@ public class ExcTest {
       var bos = new ByteArrayOutputStream();
       var oos = new ObjectOutputStream(bos);
       try (oos) {
-        var exc = new Exc(new SerializableReason("data", 4, 0, 3));
-        oos.writeObject(exc);
+        var err = new Err(new SerializableReason("data", 4, 0, 3));
+        oos.writeObject(err);
       }
 
       var bytes = bos.toByteArray();
       var ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
       try (ois) {
         var obj = ois.readObject();
-        assertThat(obj).isInstanceOf(Exc.class);
+        assertThat(obj).isInstanceOf(Err.class);
 
-        var exc = Exc.class.cast(obj);
-        var cause = exc.getCause();
+        var err = Err.class.cast(obj);
+        var cause = err.getCause();
         assertThat(cause).isNull();
 
-        var robj = exc.getReason();
+        var robj = err.getReason();
         assertThat(robj).isInstanceOf(SerializableReason.class);
         var reason = SerializableReason.class.cast(robj);
         assertThat(reason.name()).isEqualTo("data");
@@ -311,22 +311,22 @@ public class ExcTest {
       var oos = new ObjectOutputStream(bos);
       try (oos) {
         var cause = new IndexOutOfBoundsException(4);
-        var exc = new Exc(new SerializableReason("data", 4, 0, 3), cause);
-        oos.writeObject(exc);
+        var err = new Err(new SerializableReason("data", 4, 0, 3), cause);
+        oos.writeObject(err);
       }
 
       var bytes = bos.toByteArray();
       var ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
       try (ois) {
         var obj = ois.readObject();
-        assertThat(obj).isInstanceOf(Exc.class);
+        assertThat(obj).isInstanceOf(Err.class);
 
-        var exc = Exc.class.cast(obj);
-        var cause = exc.getCause();
+        var err = Err.class.cast(obj);
+        var cause = err.getCause();
         assertThat(cause).isInstanceOf(IndexOutOfBoundsException.class);
         assertThat(cause.getMessage()).isEqualTo("Index out of range: 4");
 
-        var robj = exc.getReason();
+        var robj = err.getReason();
         assertThat(robj).isInstanceOf(SerializableReason.class);
         var reason = SerializableReason.class.cast(robj);
         assertThat(reason.name()).isEqualTo("data");
@@ -341,8 +341,8 @@ public class ExcTest {
       var bos = new ByteArrayOutputStream();
       var oos = new ObjectOutputStream(bos);
       try (oos) {
-        var exc = new Exc(new IndexOutOfRange("data", 4, 0, 3));
-        oos.writeObject(exc);
+        var err = new Err(new IndexOutOfRange("data", 4, 0, 3));
+        oos.writeObject(err);
         fail();
       } catch (NotSerializableException e) {
         assertThat(e.getMessage()).isEqualTo(IndexOutOfRange.class.getName());
