@@ -227,11 +227,10 @@
           <plugin>
             <groupId>org.sonatype.central</groupId>
             <artifactId>central-publishing-maven-plugin</artifactId>
-            <version>0.8.0</version>
+            <version>0.10.0</version>
             <extensions>true</extensions>
             <configuration>
               <publishingServerId>central</publishingServerId>
-              <tokenAuth>true</tokenAuth>
               <autoPublish>true</autoPublish>
             </configuration>
           </plugin>
@@ -247,7 +246,9 @@
                   <goal>sign</goal>
                 </goals>
                 <configuration>
+                  <useAgent>false</useAgent>
                   <gpgArguments>
+                    <arg>--batch</arg>
                     <arg>--pinentry-mode</arg>
                     <arg>loopback</arg>
                   </gpgArguments>
