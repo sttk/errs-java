@@ -1,4 +1,4 @@
-# [errs-java][repo-url] [![Maven Central][mvn-img]][mvn-url] [![GitHub.io][io-img]][io-url] [![CI Status][ci-img]][ci-url] [![MIT License][mit-img]][mit-url]
+# [errs-java][repo-url] [![Maven Central][mvn-img]][mvn-url] [![MVN Repository][mvnrepo-img]][mvnrepo-url] [![GitHub.io][io-img]][io-url] [![CI Status][ci-img]][ci-url] [![MIT License][mit-img]][mit-url]
 
 A library for handling errors with reasons.
 
@@ -167,6 +167,8 @@ See the file LICENSE in this distribution for more details.
 [repo-url]: https://github.com/sttk/errs-java
 [mvn-img]: https://img.shields.io/badge/maven_central-0.2.0-276bdd.svg
 [mvn-url]: https://central.sonatype.com/artifact/io.github.sttk/errs/0.2.0
+[mvnrepo-img]: https://img.shields.io/badge/mvn_repository-0.2.0-498df4.svg
+[mvnrepo-url]: https://mvnrepository.com/artifact/io.github.sttk/errs
 [io-img]: https://img.shields.io/badge/github.io-Javadoc-4d7a97.svg
 [io-url]: https://sttk.github.io/errs-java/
 [ci-img]: https://github.com/sttk/errs-java/actions/workflows/java-ci.yml/badge.svg?branch=main
