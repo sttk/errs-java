@@ -49,20 +49,14 @@
   <dependencies>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <version>5.13.0-M2</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-engine</artifactId>
-      <version>5.13.0-M2</version>
+      <artifactId>junit-jupiter</artifactId>
+      <version>6.1.0-M1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.platform</groupId>
       <artifactId>junit-platform-launcher</artifactId>
-      <version>1.13.0-M2</version>
+      <version>6.1.0-M1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -78,7 +72,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>3.3.1</version>
+        <version>3.4.0</version>
         <executions>
           <execution>
             <id>attach-sources</id>
@@ -91,10 +85,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.11.2</version>
+        <version>3.12.0</version>
         <configuration>
           <author>true</author>
-          <source>21</source>
+          <source>25</source>
           <show>protected</show>
           <encoding>UTF-8</encoding>
           <charset>UTF-8</charset>
@@ -120,7 +114,7 @@
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
-        <version>0.8.13</version>
+        <version>0.8.14</version>
         <executions>
           <execution>
             <id>default-prepare-agent</id>
@@ -140,7 +134,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.14.0</version>
+        <version>3.15.0</version>
         <configuration>
           <compilerArgs>
             <arg>-g</arg>
@@ -151,7 +145,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.5.3</version>
+        <version>3.5.5</version>
         <configuration>
           <argLine>@{argLine} -Dgithub.sttk.errs.notify=true</argLine>
         </configuration>
@@ -159,7 +153,7 @@
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
         <artifactId>spotless-maven-plugin</artifactId>
-        <version>2.44.5</version>
+        <version>3.4.0</version>
         <configuration>
           <java>
             <googleJavaFormat/>
@@ -177,7 +171,7 @@
           <plugin>
             <groupId>org.graalvm.buildtools</groupId>
             <artifactId>native-maven-plugin</artifactId>
-            <version>0.10.6</version>
+            <version>1.0.0</version>
             <extensions>true</extensions>
             <executions>
               <execution>
@@ -193,8 +187,7 @@
               <!-- For changing environment variables in unit tests. -->
               <buildArgs>
                 <buildArg>-J--add-opens=java.base/java.lang=ALL-UNNAMED</buildArg>
-                <buildArg>--initialize-at-build-time=org.junit.platform.launcher.core.LauncherConfig</buildArg>
-                <buildArg>--initialize-at-build-time=org.junit.jupiter.engine.config.InstantiatingConfigurationParameterConverter</buildArg>
+                <buildArg>--initialize-at-build-time=org.junit.jupiter.engine.discovery.MethodSegmentResolver</buildArg>
               </buildArgs>
               <systemProperties>
                 <github.sttk.errs.notify>true</github.sttk.errs.notify>
