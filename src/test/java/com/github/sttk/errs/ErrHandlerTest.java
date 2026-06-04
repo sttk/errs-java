@@ -3,8 +3,7 @@ package com.github.sttk.errs;
 import static java.time.format.DateTimeFormatter.ISO_INSTANT;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ArrayList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,30 +19,30 @@ public class ErrHandlerTest {
     f = Err.class.getDeclaredField("syncErrHandlers");
     f.setAccessible(true);
     var o = f.get(null);
-    var m = LinkedList.class.getMethod("clear");
+    var m = ArrayList.class.getMethod("clear");
     m.invoke(o);
 
     f = Err.class.getDeclaredField("asyncErrHandlers");
     f.setAccessible(true);
     o = f.get(null);
-    m = LinkedList.class.getMethod("clear");
+    m = ArrayList.class.getMethod("clear");
     m.invoke(o);
   }
 
   @SuppressWarnings("unchecked")
-  List<ErrHandler> getSyncErrHandlers() throws Exception {
+  ArrayList<ErrHandler> getSyncErrHandlers() throws Exception {
     var f = Err.class.getDeclaredField("syncErrHandlers");
     f.setAccessible(true);
     var o = f.get(null);
-    return (List<ErrHandler>) o;
+    return (ArrayList<ErrHandler>) o;
   }
 
   @SuppressWarnings("unchecked")
-  List<ErrHandler> getAsyncErrHandlers() throws Exception {
+  ArrayList<ErrHandler> getAsyncErrHandlers() throws Exception {
     var f = Err.class.getDeclaredField("asyncErrHandlers");
     f.setAccessible(true);
     var o = f.get(null);
-    return (List<ErrHandler>) o;
+    return (ArrayList<ErrHandler>) o;
   }
 
   @Test
@@ -100,8 +99,8 @@ public class ErrHandlerTest {
 
   @Test
   void should_notify_exception() throws Exception {
-    final List<String> syncLogs = new LinkedList<>();
-    final List<String> asyncLogs = new LinkedList<>();
+    final ArrayList<String> syncLogs = new ArrayList<>();
+    final ArrayList<String> asyncLogs = new ArrayList<>();
 
     Err.addSyncHandler(
         (err, tm) -> {
@@ -134,9 +133,9 @@ public class ErrHandlerTest {
     Err.fixHandlers();
 
     new Err(new FailToDoSomething("abc"));
-    assertThat(syncLogs.get(0)).endsWith(":ErrHandlerTest.java(136):FailToDoSomething[name=abc]");
+    assertThat(syncLogs.get(0)).endsWith(":ErrHandlerTest.java(135):FailToDoSomething[name=abc]");
 
     Thread.sleep(100);
-    assertThat(asyncLogs.get(0)).endsWith(":ErrHandlerTest.java(136):FailToDoSomething[name=abc]");
+    assertThat(asyncLogs.get(0)).endsWith(":ErrHandlerTest.java(135):FailToDoSomething[name=abc]");
   }
 }

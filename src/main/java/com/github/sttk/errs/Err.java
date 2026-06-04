@@ -12,8 +12,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.management.ManagementFactory;
 import java.time.OffsetDateTime;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Is the exception class with a reason.
@@ -209,8 +208,8 @@ public final class Err extends Exception {
   }
 
   private static boolean isHandlersFixed = false;
-  private static final List<ErrHandler> syncErrHandlers = new LinkedList<>();
-  private static final List<ErrHandler> asyncErrHandlers = new LinkedList<>();
+  private static final ArrayList<ErrHandler> syncErrHandlers = new ArrayList<>();
+  private static final ArrayList<ErrHandler> asyncErrHandlers = new ArrayList<>();
 
   /**
    * Adds an {@link ErrHandler} object which is executed synchronously just after an {@link Err} is
@@ -251,6 +250,8 @@ public final class Err extends Exception {
     if (!useNotification) return;
     if (isHandlersFixed) return;
     isHandlersFixed = true;
+    syncErrHandlers.trimToSize();
+    asyncErrHandlers.trimToSize();
   }
 
   private static void notifyErr(Err err) {
