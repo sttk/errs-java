@@ -1,27 +1,48 @@
-# [errs-java][repo-url] [![Maven Central][mvn-img]][mvn-url] [![MVN Repository][mvnrepo-img]][mvnrepo-url] [![GitHub.io][io-img]][io-url] [![CI Status][ci-img]][ci-url] [![MIT License][mit-img]][mit-url]
+# [errs][repo-url] [![Maven Central][mvn-img]][mvn-url] [![MVN Repository][mvnrepo-img]][mvnrepo-url] [![GitHub.io][io-img]][io-url] [![CI Status][ci-img]][ci-url] [![MIT License][mit-img]][mit-url]
 
-A library for handling errors with reasons.
+A library for handling errors with reasons for Java
 
-In Java programming, it is cumbersome to implement a separate exception class for each exception case.
-However, trying to handle multiple exception cases with a single exception class makes it difficult to distinguish between them.
+## Overview
 
-The error class `Err` provided by this library solves this problem by accepting an object that represents the reason for the error.
-Typically, the type of this reason object is `Record`.
-Since a `Record` object can have any fields, it can store information about the situation at the time the error occurred.
-The type of the reason can be determined and cast using a switch statement, making it easy to write handling logic for each error case.
+`errs` is an exception handling library for Java designed to focus on the "Reason" behind an error.
 
-Optionally, when an `Err` object is instantiated, pre-registered error handlers can receive notifications either synchronously or asynchronously.
-However, to enable this feature, the system property `-Dgithub.sttk.errs.notify=true` must be specified at program startup.
+### Expressing "Why It Failed" via the Type System
+
+Instead of scattering many small exception subclasses across your codebase, errs uses a single `Err` exception class that carries a “reason” object whose type represents why the failure occurred.
+
+For error reasons, you can use anything from lightweight types like `String` to type-safe definitions using `record`s, all handled flexibly with the same API.
+By using a `record` in particular, you can not only express failure factors within the type system but also hold contextual information in its fields, propagating the context and relevant data at the time of the error as-is.
+Furthermore, since reasons can be determined in a type-safe manner using pattern-matching `switch` expressions, you can avoid fragile error handling that relies on string comparisons.
+
+### Decentralized Error Definition and Traceability
+
+`errs` encourages defining error reasons close to where they occur.
+This eliminates the need to share a massive, monolithic error message management across the entire application, enabling a highly maintainable design while keeping dependencies between classes clean.
+Type information is utilized to identify the reason, and the type identifiers required for this determination are resolved statically at compile time. This provides type-safe error handling with minimal runtime overhead.
+
+The core `Err` type of the library inherits `java.lang.Exception`, allowing it to integrate naturally with standard Java exception handling.
+It can also retain lower-layer exceptions as causes, enabling you to manage the "Reason" of the upper layer and the "Cause" of the lower layer separately.
+Additionally, it automatically records the file name and line number when an error is generated, making log output and failure analysis effortless.
+
+### Powerful Error-Instantiation Notification & Monitoring Ecosystem
+
+Furthermore, `errs` features a mechanism to notify error generation events.
+By running with the system property `-Dgithub.sttk.errs.notify=true`, an automatic notification can be sent to registered handlers the exact moment an `Err` is created.
+It supports synchronous handlers and asynchronous handlers, and it accommodates registration within functions.
+This makes it easy to implement logging, monitoring, metrics collection, and integration with telemetry systems.
+
+While standard Java exceptions often focus primarily on annotating and propagating errors, `errs` emphasizes explicitly defining the reason for failure through types and reliably observing the exact moment it occurs.
+This library is ideal for scenarios where you want to tightly manage the semantics of errors within your application while seamlessly integrating with production monitoring and operational infrastructure.
 
 ## Install
 
 This package can be installed from [Maven Central Repository][mvn-url].
 
-The examples of declaring that repository and the dependency on this package in Maven `pom.xml` and Gradle `build.gradle` are as follows:
+Examples of declaring that repository and the dependency on this package in Maven `pom.xml` and Gradle `build.gradle` are as follows:
 
 ### for Maven
 
-```
+```xml
   <dependencies>
     <dependency>
       <groupId>io.github.sttk</groupId>
@@ -33,7 +54,7 @@ The examples of declaring that repository and the dependency on this package in 
 
 ### for Gradle
 
-```
+```gradle
 repositories {
   mavenCentral()
 }
@@ -44,9 +65,11 @@ dependencies {
 
 ## Usage
 
-### Err instantiation and identification of a reason
+### Locally Defined Reasons and Instantiate an Err with Them
 
-The following code instantiates an `Err` and throws it.
+An `Err` class can be instantiated with any arbitrary error reason.
+Typically, a record defined to indicate the cause or context of the error is used as the reason.
+This reason does not need to be declared in a centralized file of global errors; rather, it is preferable to define it close to where the error using it as a reason actually occurs.
 
 ```java
 package sample;
@@ -58,13 +81,27 @@ public class SampleClass {
     record IndexOutOfRange(String name, int index, int min, int max) {}
 
     public void sampleMethod() throws Err {
-        ...
+        // ...
         throw new Err(new IndexOutOfRange("array", i, 0, array.length));
     }
 }
 ```
 
-And the following code catches the error and identifies the reason with a switch expression.
+An `Err` can also be instantiated with the underlying cause exception along with the reason.
+
+```java
+    public void sampleMethod() throws Err {
+        try {
+            // ...
+        } catch (IOException e) {
+            throw new Err(new IndexOutOfRange("array", i, 0, array.length), e);
+        }
+    }
+```
+
+### Type-Safe Reason Identification
+
+By using the pattern-matching switch expression, you can extract the error reason as the specified type.
 
 ```java
   try {
@@ -83,17 +120,14 @@ And the following code catches the error and identifies the reason with a switch
   }
 ```
 
-### Error notification (Optional)
+### Error Handler Registration
 
 > To enable this feature, you must specify the system property `-Dgithub.sttk.errs.notify=true` at program startup.
 
 This library optionally provides a feature to notify pre-registered error handlers when an `Err` is instantiated.
 Multiple error handlers can be registered, and you can choose to receive notifications either synchronously or asynchronously.
-To register error handlers that receive notifications synchronously, use the `Err.addSyncHandler` static method.
-For asynchronous notifications, use the `Err.addAsyncHandler` static method.
 
-Error notifications will not occur until the `Err.fixHandlers` static method is called.
-This static method locks the current set of error handlers, preventing further additions and enabling notification processing.
+To register handlers, you can use the following functions:
 
 ```java
 package sample;
@@ -109,7 +143,7 @@ public class Main {
         });
 
         Err.addAsyncHandler((err, tm) -> {
-          removeLogger.log(String.format("%s:%s:%d:%s",
+          remoteLogger.log(String.format("%s:%s:%d:%s",
               tm.format(ISO_INSTANT), err.getFile(), err.getLine(), err.toString()));
         });
 
@@ -126,10 +160,13 @@ public class Main {
 }
 ```
 
-```sh
+```bash
 % java -Dgithub.sttk.errs.notify=true sample.Main
 sample.Main$IndexOutOfRange { name=array, index=11, min=0, max=10 } - Main.java:25
 ```
+
+Error notifications will not occur until the `Err.fixErrHandlers` static method is called.
+This static method locks the current set of error handlers, preventing further additions and enabling notification processing.
 
 ## Native build
 
