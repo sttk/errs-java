@@ -47,7 +47,7 @@ Examples of declaring that repository and the dependency on this package in Mave
     <dependency>
       <groupId>io.github.sttk</groupId>
       <artifactId>errs</artifactId>
-      <version>0.2.0</version>
+      <version>0.2.1</version>
     </dependency>
   </dependencies>
 ```
@@ -59,7 +59,7 @@ repositories {
   mavenCentral()
 }
 dependencies {
-  implementation 'io.github.sttk:errs:0.2.0'
+  implementation 'io.github.sttk:errs:0.2.1'
 }
 ```
 
@@ -189,8 +189,6 @@ This library supports JDK 21 or later.
 ### Actually checked JDK versions:
 
 - Oracle GraalVM 25.0.1+8.1 (build 25.0.1+8-LTS-jvmci-b01)
-- Oracle GraalVM 24.0.2+11.1 (build 24.0.2+11-jvmci-b01)
-- Oracle GraalVM 23.0.2+7.1 (build 23.0.2+7-jvmci-b01)
 - Oracle GraalVM 21.0.9+7.1 (build 21.0.9+7-LTS-jvmci-23.1-b79)
 
 ## License
@@ -202,9 +200,9 @@ See the file LICENSE in this distribution for more details.
 
 
 [repo-url]: https://github.com/sttk/errs-java
-[mvn-img]: https://img.shields.io/badge/maven_central-0.2.0-276bdd.svg
-[mvn-url]: https://central.sonatype.com/artifact/io.github.sttk/errs/0.2.0
-[mvnrepo-img]: https://img.shields.io/badge/mvn_repository-0.2.0-498df4.svg
+[mvn-img]: https://img.shields.io/badge/maven_central-0.2.1-276bdd.svg
+[mvn-url]: https://central.sonatype.com/artifact/io.github.sttk/errs/0.2.1
+[mvnrepo-img]: https://img.shields.io/badge/mvn_repository-0.2.1-498df4.svg
 [mvnrepo-url]: https://mvnrepository.com/artifact/io.github.sttk/errs
 [io-img]: https://img.shields.io/badge/github.io-Javadoc-4d7a97.svg
 [io-url]: https://sttk.github.io/errs-java/
