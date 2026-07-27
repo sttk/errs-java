@@ -8,7 +8,7 @@
 /**
  * Contains a package which provides the APIs for handling an exception with a reason.
  *
- * @version 0.2
+ * @version 1.0
  */
 module com.github.sttk.errs {
   exports com.github.sttk.errs;
