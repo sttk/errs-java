@@ -6,7 +6,11 @@ package com.github.sttk.errs;
 
 import java.time.OffsetDateTime;
 
-/** {@code ErrHandler} is a handler of an {@link Err} object creation. */
+/**
+ * {@code ErrHandler} is a handler of an {@link Err} object creation.
+ *
+ * @since 1.0
+ */
 @FunctionalInterface
 public interface ErrHandler {
 

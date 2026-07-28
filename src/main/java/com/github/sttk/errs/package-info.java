@@ -12,5 +12,6 @@
  * the exception.
  *
  * @version 1.0
+ * @since 1.0
  */
 package com.github.sttk.errs;

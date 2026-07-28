@@ -37,6 +37,8 @@ import java.util.ArrayList;
  *     System.out.println(e.getMessage()); // => "FailToDoSomething { name=abc, value=123 }"
  * }
  * }</pre>
+ *
+ * @since 1.0
  */
 public final class Err extends Exception {
 
