@@ -139,7 +139,7 @@ public class Main {
     static {
         Err.addSyncHandler((err, tm) -> {
           System.out.println(String.format("%s - %s:%d",
-            err.getMessage(), err.getFile(), err.getLine());
+            err.getMessage(), err.getFile(), err.getLine()));
         });
 
         Err.addAsyncHandler((err, tm) -> {
@@ -165,7 +165,7 @@ public class Main {
 sample.Main$IndexOutOfRange { name=array, index=11, min=0, max=10 } - Main.java:25
 ```
 
-Error notifications will not occur until the `Err.fixErrHandlers` static method is called.
+Error notifications will not occur until the `Err.fixHandlers` static method is called.
 This static method locks the current set of error handlers, preventing further additions and enabling notification processing.
 
 ## Native build
